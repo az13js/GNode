@@ -87,6 +87,32 @@ namespace GNode {
         }
 
         /**
+         * 打印完整的结构信息
+         *
+         * @return void
+         */
+        void dump() {
+            using namespace std;
+            cout << Node::increasedId << endl;
+            dump(*this, 0);
+        }
+
+        /**
+         * 从给定节点打印完整的结构信息
+         *
+         * @param Node n
+         * @param consy unsigned int parentUuid
+         * @return void
+         */
+        void dump(Node n, const unsigned int parentUuid) {
+            using namespace std;
+            cout << n.getUuid() << "," << parentUuid << "," << n.getValue() << endl;
+            for (auto e : n.getChildren()) {
+                dump(e, n.getUuid());
+            }
+        }
+
+        /**
          * 返回所有子节点
          *
          * @return list<Node>
@@ -138,7 +164,7 @@ namespace GNode {
          * @return void
          */
         void autoSetUuid() {
-            uuid = increasedId++;
+            uuid = ++increasedId;
         }
 
     };
