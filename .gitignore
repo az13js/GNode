@@ -12,3 +12,4 @@ doc
 gmon.out
 gprofresult.txt
 build
+src/main.cpp
