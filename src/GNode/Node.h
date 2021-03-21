@@ -14,6 +14,9 @@ namespace GNode {
 
     public:
 
+        /** @var unsigned int 自增ID */
+        static unsigned int increasedId;
+
         /**
          * 初始化一个节点，同时给这个节点赋值
          *
@@ -21,7 +24,8 @@ namespace GNode {
          * @return void
          */
         Node(int value) {
-            this->value = value;
+            autoSetUuid();
+            changeValue(value);
         }
 
         /**
@@ -30,6 +34,16 @@ namespace GNode {
          * @return void
          */
         Node() {
+            autoSetUuid();
+        }
+
+        /**
+         * 返回此节点的唯一ID
+         *
+         * @return unsigned int
+         */
+        unsigned int getUuid() {
+            return uuid;
         }
 
         /**
@@ -38,17 +52,17 @@ namespace GNode {
          * @return int
          */
         int getValue() {
-            return this->value;
+            return value;
         }
 
         /**
          * 改变节点的值
          *
-         * @param int value 值
+         * @param int val 值
          * @return void
          */
-        void changeValue(int value) {
-            this->value = value;
+        void changeValue(int val) {
+            value = val;
         }
 
         /**
@@ -58,8 +72,18 @@ namespace GNode {
          */
         void debug() {
             using namespace std;
-            cout << "Node value = " << this->value << endl;
-            cout << "Children = " << this->children.size() << endl;
+            auto childrenTotal = children.size();
+            cout << "---------- Node debug ----------" << endl;
+            cout << "Node uuid = " << getUuid() << endl;
+            cout << "Node value = " << getValue() << endl;
+            cout << "Children = " << childrenTotal << endl;
+            if (childrenTotal > 0) {
+                cout << "Children uuid:" << endl;
+                for (auto e : children) {
+                    cout << e.second.getUuid() << endl;
+                }
+            }
+            cout << "--------- Debug Finish ---------" << endl;
         }
 
         /**
@@ -69,43 +93,57 @@ namespace GNode {
          */
         std::list<Node> getChildren() {
             using namespace std;
-            list<Node> children;
-            for (auto e : this->children) {
-                children.emplace_back(e.second);
+            list<Node> childrenList;
+            for (auto e : children) {
+                childrenList.emplace_back(e.second);
             }
-            return children;
+            return childrenList;
         }
 
         /**
          * 添加子节点
          *
-         * @param const Node& child
+         * @param Node& child
          * @return void
          */
-        void addChild(const Node& child) {
+        void addChild(Node child) {
             using namespace std;
-            this->children.insert(pair<const Node*, const Node&>(&child, child));
+            children.insert(pair<unsigned int, Node>(child.getUuid(), child));
         }
 
         /**
          * 移除给定子节点
          *
-         * @param const Node& child
+         * @param Node& child
          * @return void
          */
-        void removeChild(const Node& child) {
-            this->children.erase(&child);
+        void removeChild(Node& child) {
+            children.erase(child.getUuid());
         }
 
     private:
 
+        /** @var unsigned int 节点唯一ID */
+        unsigned int uuid;
+
         /** @var int 保存节点的值 */
         int value = 0;
 
-        /** @var map<const Node*, const Node&> 存放子节点 */
-        std::map<const Node*, const Node&> children;
+        /** @var map<unsigned int, Node> 存放子节点 */
+        std::map<unsigned int, Node> children;
+
+        /**
+         * 自动设置uuid
+         *
+         * @return void
+         */
+        void autoSetUuid() {
+            uuid = increasedId++;
+        }
+
     };
 
+    unsigned int Node::increasedId = 0;
 }
 
 #endif
