@@ -24,7 +24,11 @@ namespace GNode {
         }
 
         void add(Node* child) {
+            if (nodes.count(child) != 0) {
+                return;
+            }
             nodes.insert(child);
+            child->add(this);
         }
 
         std::set<Node*> getNodes() {
@@ -32,7 +36,11 @@ namespace GNode {
         }
 
         void remove(Node* node) {
+            if (nodes.count(node) == 0) {
+                return;
+            }
             nodes.erase(node);
+            node->remove(this);
         }
 
     private:
