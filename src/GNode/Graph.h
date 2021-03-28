@@ -8,17 +8,18 @@
 
 namespace GNode {
 
+    template<class T>
     class Graph {
 
     public:
 
         Graph() {
-            root = new Node();
+            root = new Node<T>();
             nodes.insert(root);
         }
 
-        Graph(int rootValue) {
-            root = new Node(rootValue);
+        Graph(T rootValue) {
+            root = new Node<T>(rootValue);
             nodes.insert(root);
         }
 
@@ -29,29 +30,25 @@ namespace GNode {
             nodes.clear();
         }
 
-        Node* getRoot() {
+        Node<T>* getRoot() {
             return root;
         }
 
-        Node* create(int val) {
-            auto node = new Node(val);
+        Node<T>* create(T val) {
+            auto node = new Node<T>(val);
             nodes.insert(node);
             return node;
         }
 
-        Node* create() {
-            return create(0);
-        }
-
-        std::set<Node*> getNodes() {
+        std::set<Node<T>*> getNodes() {
             return nodes;
         }
 
         void gc() {
             using namespace std;
-            set<Node*> searched;
-            list<Node*> removeNode;
-            queue<Node*> queryQueue;
+            set<Node<T>*> searched;
+            list<Node<T>*> removeNode;
+            queue<Node<T>*> queryQueue;
             auto queryNode = root;
 
             // 从根节点开始遍历整张图，查找所有节点
@@ -84,9 +81,9 @@ namespace GNode {
 
     private:
 
-        Node* root;
+        Node<T>* root;
 
-        std::set<Node*> nodes;
+        std::set<Node<T>*> nodes;
 
     };
 

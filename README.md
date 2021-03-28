@@ -17,7 +17,7 @@ using namespace std;
 using namespace GNode;
 
 int main() {
-    auto graph = new Graph(1);
+    auto graph = new Graph<int>(1);
     auto root = graph->getRoot();
     cout << "root = " << root->getValue() << endl;
     root->add(graph->create(2));
@@ -42,7 +42,7 @@ int main() {
 图的时候给根节点赋值为`1`。一张图必须且只能有一个根节点。
 
 ```C++
-auto graph = new Graph(1);
+auto graph = new Graph<int>(1);
 ```
 
 创建图之后，可以使用`getRoot()`方法获得图的根节点，使用的时候其它节点都是以根节点为
@@ -61,12 +61,11 @@ cout << "root = " << root->getValue() << endl;
 
 可以在图上面使用`create()`方法创建新的节点，比如代码中的`graph->create(2)`和
 `graph->create(3)`，是分别创建新的节点并初始化值为`2`和`3`。节点带有`add()`方法可以
-用来添加指向其它节点的连接。例如代码中连接情况是
+用来添加到其它节点的连接。例如代码中连接情况是
 
          1  (root)
        /   \
       |     |
-      v     v
       2     3
 
 实现这个图的构建的操作是：
@@ -76,7 +75,7 @@ root->add(graph->create(2));
 root->add(graph->create(3));
 ```
 
-想获得已知节点所指向的节点，可以使用`getNodes()`方法。
+想获得已知节点所连接的节点，可以使用`getNodes()`方法。
 
 ```C++
 for (auto n : root->getNodes()) {
@@ -113,10 +112,10 @@ root->remove(node4);
 using namespace GNode;
 
 int main() {
-    auto graph = new Graph();
+    auto graph = new Graph<int>(0);
     // 创建100个没用的节点
     for (int i = 0; i < 100; i++) {
-        graph->create();
+        graph->create(1);
     }
     graph->gc(); // 执行垃圾节点清除，上面的100个节点会在这里被删掉
 
@@ -126,3 +125,34 @@ int main() {
     return 0;
 }
 ```
+
+节点库的`Graph`类是模板类，除了`int`类型之外，支持使用其它类型作为节点容纳的对象类型。
+
+```C++
+#include "GNode/Graph.h"
+#include <iostream>
+
+using namespace std;
+using namespace GNode;
+
+int main() {
+    auto graph = new Graph<double>(1.1);
+    auto root = graph->getRoot();
+    cout << "root = " << root->getValue() << endl;
+    root->add(graph->create(2.1));
+    root->add(graph->create(3.1));
+    cout << "node in root:" << endl;
+    for (auto n : root->getNodes()) {
+        cout << n->getValue() << endl;
+    }
+    delete graph;
+    return 0;
+}
+```
+
+运行结果：
+
+    root = 1.1
+    node in root:
+    2.1
+    3.1

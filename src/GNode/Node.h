@@ -5,6 +5,7 @@
 
 namespace GNode {
 
+    template<class T>
     class Node {
 
     public:
@@ -12,14 +13,14 @@ namespace GNode {
         Node() {
         }
 
-        Node(int val) {
+        Node(T val) {
             value = val;
         }
 
         ~Node() {
         }
 
-        int getValue() {
+        T getValue() {
             return value;
         }
 
@@ -45,7 +46,7 @@ namespace GNode {
 
     private:
 
-        int value = 0;
+        T value = 0;
 
         std::set<Node*> nodes;
 
