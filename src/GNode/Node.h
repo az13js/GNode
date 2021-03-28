@@ -24,7 +24,7 @@ namespace GNode {
             return value;
         }
 
-        void add(Node* child) {
+        void add(Node<T>* child) {
             if (nodes.count(child) != 0) {
                 return;
             }
@@ -32,11 +32,11 @@ namespace GNode {
             child->add(this);
         }
 
-        std::set<Node*> getNodes() {
+        std::set<Node<T>*> getNodes() {
             return nodes;
         }
 
-        void remove(Node* node) {
+        void remove(Node<T>* node) {
             if (nodes.count(node) == 0) {
                 return;
             }
@@ -48,7 +48,7 @@ namespace GNode {
 
         T value = 0;
 
-        std::set<Node*> nodes;
+        std::set<Node<T>*> nodes;
 
     };
 
