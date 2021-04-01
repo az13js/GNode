@@ -23,8 +23,17 @@ namespace GNode {
             nodes.insert(root);
         }
 
+        Graph(T rootValue, void (*deleteCallbackFunction)(T)) {
+            root = new Node<T>(rootValue);
+            nodes.insert(root);
+            deleteCallback = deleteCallbackFunction;
+        }
+
         ~Graph() {
             for (auto e : nodes) {
+                if (nullptr != deleteCallback) {
+                    deleteCallback(e->getValue());
+                }
                 delete e;
             }
             nodes.clear();
@@ -69,6 +78,9 @@ namespace GNode {
                 if (searched.count(e) == 0) {
                     // 不能直接在这里进行 nodes.erase(e) 操作！
                     removeNode.emplace_back(e);
+                    if (nullptr != deleteCallback) {
+                        deleteCallback(e->getValue());
+                    }
                     delete e;
                 }
             }
@@ -79,11 +91,13 @@ namespace GNode {
             }
         }
 
-    private:
+    protected:
 
         Node<T>* root;
 
         std::set<Node<T>*> nodes;
+
+        void (*deleteCallback)(T) = nullptr;
 
     };
 

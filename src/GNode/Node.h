@@ -20,6 +20,10 @@ namespace GNode {
         ~Node() {
         }
 
+        void setDoubleLink(bool enable) {
+            useDoubleLink = enable;
+        }
+
         T getValue() {
             return value;
         }
@@ -29,7 +33,9 @@ namespace GNode {
                 return;
             }
             nodes.insert(child);
-            child->add(this);
+            if (useDoubleLink) {
+                child->add(this);
+            }
         }
 
         std::set<Node<T>*> getNodes() {
@@ -41,7 +47,9 @@ namespace GNode {
                 return;
             }
             nodes.erase(node);
-            node->remove(this);
+            if (useDoubleLink) {
+                node->remove(this);
+            }
         }
 
     private:
@@ -49,6 +57,8 @@ namespace GNode {
         T value = 0;
 
         std::set<Node<T>*> nodes;
+
+        bool useDoubleLink = true;
 
     };
 

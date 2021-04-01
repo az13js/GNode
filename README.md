@@ -157,3 +157,73 @@ int main() {
     node in root:
     2.1
     3.1
+
+删除回调函数。你可以在创建图的时候，指定一个函数作为`gc()`方法或者删除节点时接收删除通知，以得知哪些节点被删除。如：
+
+```C++
+#include "GNode/Graph.h"
+#include <iostream>
+
+using namespace std;
+using namespace GNode;
+
+int main() {
+    Graph<int> g(12, [](int x) {cout << "x=" << x << endl;});
+    return 0;
+}
+```
+
+上述代码当`g`被析构的时候，节点`12`会被删除，此时会输出：
+
+    x=12
+
+这种特性使得我们使用自定义的、创建在堆上的对象作为节点容纳的值的时候，能够获得节点删除的回调，使得我们可以同步地删除堆上的无用对象。
+
+最后，`Graph`类的节点是双向连接的，这意味着我们从中间节点遍历时，会获得第一层的节点，如：
+
+      A
+     / \
+    B   C
+       / \
+      D   E
+
+我们调用`C`的`getNodes()`方法会得到`A`、`D`、`E`三个节点，因为这三个节点都连接到了`C`上。但我们不总是想要这样的特性，例如在一个由上到下构建的树结构的时候
+
+      A
+     / \
+    v   v
+    B   C
+       / \
+      v   v
+      D   E
+
+此时遍历应该是有方向的，只能从上到下不能反之，这种时候我们需要获得`C`的子节点就只能返回`D`和`E`才对。
+
+针对这种情况请使用`Tree`模板类。
+
+```C++
+#include "GNode/Tree.h"
+#include <iostream>
+
+using namespace std;
+using namespace GNode;
+
+int main() {
+    auto t = new Tree<char>('A');
+    t->getRoot()->add(t->create('B'));
+    auto c = t->create('B');
+    c->add(t->create('D'));
+    c->add(t->create('E'));
+    t->getRoot()->add(c);
+    for (auto e : c->getNodes()) {
+        cout << e->getValue() << endl;
+    }
+    delete t;
+    return 0;
+}
+```
+
+上面代码执行将输出：
+
+    D
+    E
